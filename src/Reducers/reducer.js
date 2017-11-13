@@ -1,8 +1,8 @@
 import {combineReducers} from "redux";
-import friends from "./FriendsReducer";
+import quotes from "./QuotesReducer";
 
 const rootReducer = combineReducers({
-  friends
+  quotes
 });
 
 export default rootReducer;

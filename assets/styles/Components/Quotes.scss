@@ -1,0 +1,15 @@
+.quotes {
+  margin-left: 100px;
+  margin-top: 20px;
+  .loader {
+    margin-left: 10px !important;
+    &:after {
+      height: 20px;
+      width: 20px;
+    }
+    &:before {
+      height: 20px;
+      width: 20px;
+    }
+  }
+}
