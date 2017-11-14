@@ -7,6 +7,15 @@ const quotesApi = {
   },
   getAllProducts: () => {
     return axios.get(api + "/products/list");
+  },
+  getDeliveryAdder: (payload) => {
+    return axios.post(api + "/deliveryadderanalytics/getAdder", payload);
+  },
+  getCustomerAdder: (payload) => {
+    return axios.post(api + "/customeradderanalytics/getAdder", payload);
+  },
+  getCustomerVariance: (payload) => {
+    return axios.post(api + "/customervarianceanalytics/getVariance", payload);
   }
 };
 

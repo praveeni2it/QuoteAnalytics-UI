@@ -26,6 +26,42 @@ const quoteActions = {
         throw(error);
       });
     });
+  },
+  getDeliveryAdder: (payload) => {
+    dispatch((action) => {
+      QuotesApi.getDeliveryAdder(payload).then((response) => {
+        action({
+          type: actions.GET_DELIVERY_ADDER,
+          data: response.data
+        });
+      }).catch((error) => {
+        throw(error);
+      });
+    });
+  },
+  getCustomerAdder: (payload) => {
+    dispatch((action) => {
+      QuotesApi.getCustomerAdder(payload).then((response) => {
+        action({
+          type: actions.GET_CUSTOMER_ADDER,
+          data: response.data
+        });
+      }).catch((error) => {
+        throw(error);
+      });
+    });
+  },
+  getCustomerVariance: (payload) => {
+    dispatch((action) => {
+      QuotesApi.getCustomerVariance(payload).then((response) => {
+        action({
+          type: actions.GET_CUSTOMER_VARIANCE,
+          data: response.data
+        });
+      }).catch((error) => {
+        throw(error);
+      });
+    });
   }
 };
 
