@@ -10,7 +10,8 @@ import QuotesActions from "../Actions/QuotesActions";
     "products": store.quotes.products,
     "deliveryAdder": store.quotes.deliveryAdder,
     "customerAdder": store.quotes.customerAdder,
-    "customerVariance": store.quotes.customerVariance
+    "customerVariance": store.quotes.customerVariance,
+    "finalPrice": store.quotes.finalPrice
   };
 })
 
@@ -23,17 +24,14 @@ class Quotes extends React.Component {
       deliveryAdder: 0,
       customerAdder: 0,
       customerVariance: 0,
-      deliveryAdderValue: 0,
-      customerAdderValue: 0,
-      customerVarianceValue: 0,
       cost: 0,
       finalPrice: 0,
       isCustomer: true,
       isProduct: true,
-      isDeliveryAdder: false,
-      isCustomerData: false,
+      isAdder: false,
       customerId: "",
-      productId: ""
+      productId: "",
+      deliveryYear: ""
     };
   }
 
@@ -44,12 +42,10 @@ class Quotes extends React.Component {
       deliveryAdder: nextProps.deliveryAdder,
       customerAdder: nextProps.customerAdder,
       customerVariance: nextProps.customerVariance,
+      finalPrice: nextProps.finalPrice,
       isCustomer: false,
       isProduct: false,
-      isDeliveryAdder: false,
-      isCustomerData: false
-    }, () => {
-      this.handleAnalytics();
+      isAdder: false
     });
   }
 
@@ -60,7 +56,7 @@ class Quotes extends React.Component {
     this.el.find(".dropdown.customer").dropdown({
       onChange: (value) => {
         this.setState({
-          customerId: value
+          customerId: value,
         }, () => {
           this.getCustomerData();
         });
@@ -78,25 +74,28 @@ class Quotes extends React.Component {
     this.el.find(".dropdown.financial-year").dropdown({
       onChange: (value) => {
         this.setState({
-          isDeliveryAdder: true
+          deliveryYear: value
         }, () => {
-          QuotesActions.getDeliveryAdder({
-            deliveryYear: value
-          });
+          this.getCustomerData();
         });
       }
     });
   }
 
   getCustomerData = () => {
-    const {customerId, productId} = this.state;
-    if (customerId && productId) {
-      const payload = {
-        customerId: customerId,
-        productId: productId
-      };
-      QuotesActions.getCustomerAdder(payload);
-      QuotesActions.getCustomerVariance(payload);
+    const {cost, deliveryYear, customerId, productId} = this.state;
+    if (customerId && productId && deliveryYear) {
+      this.setState({
+        isAdder: true
+      }, () => {
+        const payload = {
+          cost: cost,
+          deliveryYear: deliveryYear,
+          customerId: customerId,
+          productId: productId
+        };
+        QuotesActions.getCustomerAdder(payload);
+      });
     }
   }
 
@@ -104,21 +103,7 @@ class Quotes extends React.Component {
     this.setState({
       cost: event.target.value
     }, () => {
-      this.handleAnalytics();
-    });
-  }
-
-  handleAnalytics = () => {
-    const {cost, deliveryAdder, customerAdder, customerVariance} = this.state;
-    const deliveryAdderValue = (cost * deliveryAdder) / 100;
-    const customerAdderValue = (cost * customerAdder) / 100;
-    const customerVarianceValue = (cost * customerVariance) / 100;
-    const finalPrice = deliveryAdderValue + customerAdderValue + customerVarianceValue;
-    this.setState({
-      deliveryAdderValue: deliveryAdderValue,
-      customerAdderValue: customerAdderValue,
-      customerVarianceValue: customerVarianceValue,
-      finalPrice: finalPrice
+      this.getCustomerData();
     });
   }
 
@@ -126,14 +111,14 @@ class Quotes extends React.Component {
     const {
       customers,
       products,
-      deliveryAdderValue,
-      customerAdderValue,
-      customerVarianceValue,
+      deliveryAdder,
+      customerAdder,
+      customerVariance,
+      cost,
       finalPrice,
       isCustomer,
       isProduct,
-      isDeliveryAdder,
-      isCustomerData
+      isAdder,
     } = this.state;
     return (
       <div className="quotes">
@@ -193,7 +178,7 @@ class Quotes extends React.Component {
           <div className="four wide column">
             <div className="ui sub header">Cost</div>
             <div className="ui icon input">
-              <input type="text" onChange={this.handleCostChange}
+              <input type="text" value={cost} onChange={this.handleCostChange}
                 placeholder="Cost" />
             </div>
           </div>
@@ -201,22 +186,22 @@ class Quotes extends React.Component {
         <div className="ui grid">
           <div className="four wide column">
             <div className="ui sub header">Delivery Adder</div>
-            <div className={isDeliveryAdder ? "ui icon input loading" : "ui icon input"}>
-              <input type="text" value={deliveryAdderValue}
+            <div className={isAdder ? "ui icon input loading" : "ui icon input"}>
+              <input type="text" value={deliveryAdder}
                 placeholder="Delivery Adder" />
             </div>
           </div>
           <div className="four wide column">
             <div className="ui sub header">Customer Adder</div>
-            <div className={isCustomerData ? "ui icon input loading" : "ui icon input"}>
-              <input type="text" value={customerAdderValue}
+            <div className={isAdder ? "ui icon input loading" : "ui icon input"}>
+              <input type="text" value={customerAdder}
                 placeholder="Customer Adder" />
             </div>
           </div>
           <div className="four wide column">
             <div className="ui sub header">Customer Variance</div>
-            <div className={isCustomerData ? "ui icon input loading" : "ui icon input"}>
-              <input type="text" value={customerVarianceValue}
+            <div className={isAdder ? "ui icon input loading" : "ui icon input"}>
+              <input type="text" value={customerVariance}
                 placeholder="Customer Variance" />
             </div>
           </div>
